@@ -1,5 +1,6 @@
 $(document).ready(function() {
 
+	// Load an audio context for current browser.
 	var audioContext = (
 		window.AudioContext ||
 		window.webkitAudioContext ||
@@ -15,7 +16,11 @@ $(document).ready(function() {
 	}
 
 	var context = new audioContext();
+
+	// For reverb
 	var convolver = context.createConvolver();
+
+	// To control gain of wet/dry reverb.
 	var dryGain = context.createGain();
 	var wetGain = context.createGain();
 
@@ -46,11 +51,14 @@ $(document).ready(function() {
 			var source = context.createBufferSource();
 			source.buffer = object.buffer;
 			convolver.buffer = source.buffer;
+
+			// Set up connections in audio context.
 			source.connect(convolver);
 			source.connect(dryGain);
 			dryGain.connect(context.destination);
 			convolver.connect(wetGain);
 			wetGain.connect(context.destination);
+
 			source.start(0);
 			object.source = source;
 		}
@@ -93,6 +101,7 @@ $(document).ready(function() {
 	$('#reverb').on('change', function() {
 		var percent = $(this).val();
 
+		// Use an equal power crossfade
 		wetGain.gain.value = Math.cos((1 - percent) * 0.5 * Math.PI);
 		dryGain.gain.value = Math.cos(percent * 0.5 * Math.PI);
 	});
