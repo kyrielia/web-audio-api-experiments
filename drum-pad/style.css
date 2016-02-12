@@ -1,0 +1,16 @@
+#drum-pad {
+	margin-top: 20px;
+}
+
+.pad {
+	font-size: 30px;
+	color: #FFF;
+	position: relative;
+	display: inline-block;
+	padding: 30px 35px 30px 35px;
+	background-color: #333;
+}
+
+.pad.keydown {
+	background-color: #111;
+}
