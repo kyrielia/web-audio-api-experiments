@@ -15,6 +15,12 @@ $(document).ready(function() {
 	}
 
 	var context = new audioContext();
+	var convolver = context.createConvolver();
+	var dryGain = context.createGain();
+	var wetGain = context.createGain();
+
+	dryGain.gain.value = 1;
+	wetGain.gain.value = 0;
 
 	function loadAudio(object, url) {
 
@@ -39,7 +45,12 @@ $(document).ready(function() {
 		object.play = function() {
 			var source = context.createBufferSource();
 			source.buffer = object.buffer;
-			source.connect(context.destination);
+			convolver.buffer = source.buffer;
+			source.connect(convolver);
+			source.connect(dryGain);
+			dryGain.connect(context.destination);
+			convolver.connect(wetGain);
+			wetGain.connect(context.destination);
 			source.start(0);
 			object.source = source;
 		}
@@ -49,8 +60,13 @@ $(document).ready(function() {
 		addAudioProperties(this);
 	});
 
-	$('.pad').click(function() {
+	$('.pad').mousedown(function() {
+		$(this).addClass('keydown');
 		this.play();
+	});
+
+	$('.pad').mouseup(function() {
+		$(this).removeClass('keydown');
 	});
 
 	$(document).keydown(function(key) {
@@ -72,5 +88,12 @@ $(document).ready(function() {
 			}
 			return true;
 		})
+	});
+
+	$('#reverb').on('change', function() {
+		var percent = $(this).val();
+
+		wetGain.gain.value = Math.cos((1 - percent) * 0.5 * Math.PI);
+		dryGain.gain.value = Math.cos(percent * 0.5 * Math.PI);
 	});
 });
