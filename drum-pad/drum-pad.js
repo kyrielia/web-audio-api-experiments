@@ -24,6 +24,9 @@ $(document).ready(function() {
 	var dryGain = context.createGain();
 	var wetGain = context.createGain();
 
+	// Master volume
+	var masterGain = context.createGain();
+
 	dryGain.gain.value = 1;
 	wetGain.gain.value = 0;
 
@@ -55,9 +58,10 @@ $(document).ready(function() {
 			// Set up connections in audio context.
 			source.connect(convolver);
 			source.connect(dryGain);
-			dryGain.connect(context.destination);
+			dryGain.connect(masterGain);
 			convolver.connect(wetGain);
-			wetGain.connect(context.destination);
+			wetGain.connect(masterGain);
+			masterGain.connect(context.destination);
 
 			source.start(0);
 			object.source = source;
@@ -104,5 +108,12 @@ $(document).ready(function() {
 		// Use an equal power crossfade
 		wetGain.gain.value = Math.cos((1 - percent) * 0.5 * Math.PI);
 		dryGain.gain.value = Math.cos(percent * 0.5 * Math.PI);
+	});
+
+	$('#master').on('change', function() {
+		var percent = $(this).val();
+
+		// Use an equal power crossfade
+		masterGain.gain.value = Math.cos((1 - percent) * 0.5 * Math.PI);
 	});
 });
