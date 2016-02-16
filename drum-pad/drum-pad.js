@@ -20,6 +20,10 @@ $(document).ready(function() {
 	// For reverb
 	var convolver = context.createConvolver();
 
+	// For delay
+	var delay = context.createDelay();
+	delay.delayTime.value = 0.2;
+
 	// To control gain of wet/dry reverb.
 	var dryGain = context.createGain();
 	var wetGain = context.createGain();
@@ -56,8 +60,11 @@ $(document).ready(function() {
 			convolver.buffer = source.buffer;
 
 			// Set up connections in audio context.
+			source.connect(delay);
 			source.connect(convolver);
 			source.connect(dryGain);
+			delay.connect(convolver);
+			delay.connect(dryGain);
 			dryGain.connect(masterGain);
 			convolver.connect(wetGain);
 			wetGain.connect(masterGain);
@@ -114,6 +121,6 @@ $(document).ready(function() {
 		var percent = $(this).val();
 
 		// Use an equal power crossfade
-		masterGain.gain.value = Math.cos((1 - percent) * 0.5 * Math.PI);
+		masterGain.gain.value = percent;
 	});
 });
