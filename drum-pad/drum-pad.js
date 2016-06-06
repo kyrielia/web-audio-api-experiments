@@ -22,7 +22,7 @@ $(document).ready(function() {
 
 	// For delay
 	var delay = context.createDelay();
-	delay.delayTime.value = 0.2;
+	delay.delayTime.value = 0;
 
 	// To control gain of wet/dry reverb.
 	var dryGain = context.createGain();
@@ -122,5 +122,11 @@ $(document).ready(function() {
 
 		// Use an equal power crossfade
 		masterGain.gain.value = percent;
+	});
+
+	$('#delay').on('change', function() {
+		var delayTime = $(this).val();
+		// Use an equal power crossfade
+		delay.delayTime.value = delayTime;
 	});
 });
